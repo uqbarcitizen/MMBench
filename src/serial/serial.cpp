@@ -17,7 +17,7 @@ double matrixC[DIM][DIM];
 
 void fillMatrices (int n);
 double multiplyMatrices (int n);
-void parseArguments(int argc, char *argv[]);
+//void parseArguments(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
 {
@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
     std::cout 
         << "Matrices dimensions: " << DIM << std::endl;
 
-    int n = NUMTIMES;
+    int n = DIM;
 
-    parseArguments(argc, argv);
+    //parseArguments(argc, argv);
     fillMatrices(n);
     double time = multiplyMatrices(n);
 
@@ -80,6 +80,8 @@ double  multiplyMatrices (int n)
     return totalTime;
 }
 
+
+/*
 int parseUInt(const char *str, unsigned int *output)
 {
   char *next;
@@ -137,4 +139,4 @@ void parseArguments(int argc, char *argv[])
         }
     }  
 }
-
+*/
