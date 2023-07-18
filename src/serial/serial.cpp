@@ -43,6 +43,13 @@ int main(int argc, char *argv[])
 double matrixMultiply(int argc, char *argv[])
 {
     //Store dimensions argument
+
+    if (atoi(argv[2]) == 0)
+    {
+        std::cout << "Dimensions must be greater than 0" << std::endl;
+        exit(1);
+    }
+
     int n = atoi(argv[2]);
 
     //Define matrices dynamically
