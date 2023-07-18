@@ -50,9 +50,6 @@ double matrixMultiply(int argc, char *argv[])
     int** B = new int*[n];
     int** C = new int*[n];
 
-    //Define matrices statically
-    //int A[n][n], B[n][n], C[n][n];
-
     for (int i = 0; i < n; i++)
     {
         A[i] = new int[n];
@@ -110,7 +107,6 @@ double matrixMultiply(int argc, char *argv[])
         {
             for (int k = 0; k < n; k++)
             {
-                //*(C + i*n + j) += (*(A + i + k*n)) * (*(B + k*n + j));
                 C[i][j] += A[i][k] * B[k][j];
             }
         }
