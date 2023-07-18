@@ -10,7 +10,7 @@ double matrixMultiply(int argc, char *argv[]);
 int main(int argc, char *argv[])
 {
    //Set the matrix dimensions (dim x dim)
-   int dim = 10;
+   double dim = 10;
 
    //Read command line arguments
    for (int i = 0; i < argc; i++)
@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
         } 
    } 
 
-   double x = matrixMultiply(argc, argv);
+   double totalTime = matrixMultiply(argc, argv);
 
-   //std::cout << x << std::endl;
+   std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
 
    return 0;
 }
@@ -74,6 +74,10 @@ double matrixMultiply(int argc, char *argv[])
         }
     }
 
+    double totalTime;
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+
     //Perform the matrix multiplication -> C = A*B
     for (int i = 0; i < n; i++)
     {
@@ -86,5 +90,9 @@ double matrixMultiply(int argc, char *argv[])
         }
     }
 
-    return 0;
+    auto t2 = std::chrono::high_resolution_clock::now();
+
+    totalTime = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
+
+    return totalTime;
 }
