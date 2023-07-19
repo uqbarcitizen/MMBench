@@ -33,9 +33,12 @@ int main(int argc, char *argv[])
         } 
    } 
 
-   checkDimensions(dim); 
+    checkDimensions(dim); 
 
-   int n = dim;
+    int n = dim;
+
+    //std::cout << "Matrix dimesions are " << dim << std::endl;
+
     //Define matrices dynamically
     int** A = new int*[n];
     int** B = new int*[n];
