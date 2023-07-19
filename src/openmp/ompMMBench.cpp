@@ -4,6 +4,9 @@
 #include <ctime>
 #include <chrono>
 #include <cstring>
+#include <omp.h>
+
+#define OMP_NUM_THREADS 4
 
 void checkDimensions(int &dim);
 
@@ -95,6 +98,7 @@ int main(int argc, char *argv[])
     auto t1 = std::chrono::high_resolution_clock::now();
 
     //Perform the matrix multiplication -> C = A*B
+    #pragma omp parallel for shared(A, B, C) shedule(static) num_threads(THREADS)
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -128,6 +132,7 @@ int main(int argc, char *argv[])
     }
     delete[] C;
 
+   std::cout << "Number of threads defined by the user: " << OMP_NUM_THREADS << std::endl; 
    std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
 
    return 0;
