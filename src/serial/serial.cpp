@@ -5,12 +5,12 @@
 #include <chrono>
 #include <cstring>
 
-double matrixMultiply(int argc, char *argv[]);
+void checkDimensions(int &dim);
 
 int main(int argc, char *argv[])
 {
-   //Set the matrix dimensions (dim x dim)
-   int dim = 10;
+   //Set the matrix dimensions (dim x dim). Default 1000
+   int dim = -1;
 
    //Read command line arguments
    for (int i = 0; i < argc; i++)
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
         if ((strcmp(argv[i], "-D") == 0 ) || (strcmp(argv[i], "--dimensions") == 0))
         {
             dim = atoi(argv[++i]);
-            std::cout << "User dimensions (dim x dim) is " << dim << std::endl;
+            std::cout << "User dimensions (dim x dim) are " << dim << std::endl;
         }
         else if ((strcmp(argv[i], "-H") == 0) || (strcmp(argv[i], "--help") == 0))
         {
@@ -33,25 +33,9 @@ int main(int argc, char *argv[])
         } 
    } 
 
-   double totalTime = matrixMultiply(argc, argv);
+   checkDimensions(dim); 
 
-   std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
-
-   return 0;
-}
-
-double matrixMultiply(int argc, char *argv[])
-{
-    //Store dimensions argument
-
-    if (atoi(argv[2]) == 0)
-    {
-        std::cout << "Dimensions must be greater than 0" << std::endl;
-        exit(1);
-    }
-
-    int n = atoi(argv[2]);
-
+   int n = dim;
     //Define matrices dynamically
     int** A = new int*[n];
     int** B = new int*[n];
@@ -141,5 +125,22 @@ double matrixMultiply(int argc, char *argv[])
     }
     delete[] C;
 
-    return totalTime;
+   std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
+
+   return 0;
+}
+
+void checkDimensions(int &dim)
+{
+    if (dim == -1)
+    {
+        dim = 1000;
+        std::cout << "Default dimensions are " << dim << " (dim x dim)" << std::endl;
+    }
+
+    if (dim <= 0)
+    {
+        std::cout << "Dimensions must be greater than 0" << std::endl;
+        exit(1);
+    }
 }
