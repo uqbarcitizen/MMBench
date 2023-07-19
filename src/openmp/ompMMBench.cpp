@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     auto t1 = std::chrono::high_resolution_clock::now();
 
     //Perform the matrix multiplication -> C = A*B
-    #pragma omp parallel for shared(A, B, C) shedule(static) num_threads(THREADS)
+    #pragma omp parallel for shared(A, B, C) schedule(static) num_threads(OMP_NUM_THREADS)
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
