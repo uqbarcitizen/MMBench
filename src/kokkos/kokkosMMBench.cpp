@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < n; j++)
         {
-            h_A(i,j) = 1;
+            h_A(i,j) = 2;
         }
     }
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < n; j++)
         {
-            h_B(i,j) = 1;
+            h_B(i,j) = 2;
         }
     }
 
@@ -115,6 +115,17 @@ int main(int argc, char *argv[])
 
     std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
 
+    /*
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            std::cout << C(i,j) << "";
+        }
+        std::cout << std::endl;
+    }
+    */
+   
     }
     Kokkos::finalize();
 
