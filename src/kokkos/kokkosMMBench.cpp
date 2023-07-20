@@ -66,8 +66,6 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < n; j++)
         {
-
-            //*(A + i*n + j) = 1;
             h_A(i,j) = 1;
         }
     }
@@ -77,7 +75,6 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < n; j++)
         {
-            //*(B + i*n + j) = 1;
             h_B(i,j) = 1;
         }
     }
@@ -87,7 +84,6 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < n; j++)
         {
-            //*(C + i*n + j) = 0;
             h_C(i,j) = 0;
         }
     }
@@ -102,9 +98,7 @@ int main(int argc, char *argv[])
     auto t1 = std::chrono::high_resolution_clock::now();
 
     //Perform the matrix multiplication -> C = A*B
-
-    //for (int i = 0; i < n; i++)
-    Kokkos::parallel_for("m_mul", n, KOKKOS_LAMBDA (int i)
+    Kokkos::parallel_for("m_mul", n, KOKKOS_LAMBDA (const int i)
     {
         for (int j = 0; j < n; j++)
         {
