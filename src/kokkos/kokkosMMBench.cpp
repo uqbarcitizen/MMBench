@@ -4,6 +4,7 @@
 #include <ctime>
 #include <chrono>
 #include <cstring>
+#include <limits>
 
 #include <Kokkos_Core.hpp>
 
@@ -42,27 +43,23 @@ int main(int argc, char *argv[])
 
     int n = dim;
 
-    //std::cout << "Matrix dimesions are " << dim << std::endl;
+    #ifndef MemSpace
+    #define MemSpace Kokkos::HostSpace
+    #endif
 
-    //Define matrices dynamically
-    int** A = new int*[n];
-    int** B = new int*[n];
-    int** C = new int*[n];
+    using ExecSpace = MemSpace::execution_space;
+    using range_policy = Kokkos::RangePolicy<ExecSpace>;
 
-    for (int i = 0; i < n; i++)
-    {
-        A[i] = new int[n];
-    }
+    //Allocate Matrix A, B, C on device
+    typedef Kokkos::View<int**, Kokkos::LayoutLeft, MemSpace> ViewMatrixType;
+    ViewMatrixType A("A", n, n);
+    ViewMatrixType B("B", n, n);
+    ViewMatrixType C("C", n, n);
 
-    for (int i = 0; i < n; i++)
-    {
-        B[i] = new int[n];
-    }
-
-    for (int i = 0; i < n; i++)
-    {
-        C[i] = new int[n];
-    }
+    //Host mirrors of device views
+    ViewMatrixType::HostMirror h_A = Kokkos::create_mirror_view(A);
+    ViewMatrixType::HostMirror h_B = Kokkos::create_mirror_view(B);
+    ViewMatrixType::HostMirror h_C = Kokkos::create_mirror_view(C);
 
     //Matrix A init
     for (int i = 0; i < n; i++)
@@ -71,7 +68,7 @@ int main(int argc, char *argv[])
         {
 
             //*(A + i*n + j) = 1;
-            A[i][j] = 1;
+            h_A[i][j] = 1;
         }
     }
 
@@ -81,7 +78,7 @@ int main(int argc, char *argv[])
         for (int j = 0; j < n; j++)
         {
             //*(B + i*n + j) = 1;
-            B[i][j] = 1;
+            h_B[i][j] = 1;
         }
     }
 
@@ -91,9 +88,14 @@ int main(int argc, char *argv[])
         for (int j = 0; j < n; j++)
         {
             //*(C + i*n + j) = 0;
-            C[i][j] = 0;
+            h_C[i][j] = 0;
         }
     }
+
+    //Deep copy host views to device views
+    Kokkos::deep_copy(A, h_A);
+    Kokkos::deep_copy(B, h_B);
+    Kokkos::deep_copy(C, h_C);
 
     double totalTime;
 
