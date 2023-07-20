@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         {
 
             //*(A + i*n + j) = 1;
-            h_A[i][j] = 1;
+            h_A(i,j) = 1;
         }
     }
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         for (int j = 0; j < n; j++)
         {
             //*(B + i*n + j) = 1;
-            h_B[i][j] = 1;
+            h_B(i,j) = 1;
         }
     }
 
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         for (int j = 0; j < n; j++)
         {
             //*(C + i*n + j) = 0;
-            h_C[i][j] = 0;
+            h_C(i,j) = 0;
         }
     }
 
@@ -102,45 +102,29 @@ int main(int argc, char *argv[])
     auto t1 = std::chrono::high_resolution_clock::now();
 
     //Perform the matrix multiplication -> C = A*B
-    for (int i = 0; i < n; i++)
+
+    //for (int i = 0; i < n; i++)
+    Kokkos::parallel_for("m_mul", n, KOKKOS_LAMBDA (int i)
     {
         for (int j = 0; j < n; j++)
         {
             for (int k = 0; k < n; k++)
             {
-                C[i][j] += A[i][k] * B[k][j];
+                C(i,j) += A(i,k) * B(k,j);
             }
         }
-    }
+    });
 
     auto t2 = std::chrono::high_resolution_clock::now();
 
     totalTime = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
 
-    for (int i = 0; i < n; i++)
-    {
-        delete[] A[i];
+    std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
+
     }
-    delete[] A;
+    Kokkos::finalize();
 
-     for (int i = 0; i < n; i++)
-    {
-        delete[] B[i];
-    }
-    delete[] B;
-
-     for (int i = 0; i < n; i++)
-    {
-        delete[] C[i];
-    }
-    delete[] C;
-
-   std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
-
-   }
-   Kokkos::finalize();
-
-   return 0;
+    return 0;
 }
 
 void checkDimensions(int &dim)
