@@ -37,6 +37,9 @@ int main(int argc, char *argv[])
 
     checkDimensions(dim); 
 
+    Kokkos::initialize(argc, argv);
+    {
+
     int n = dim;
 
     //std::cout << "Matrix dimesions are " << dim << std::endl;
@@ -131,6 +134,9 @@ int main(int argc, char *argv[])
     delete[] C;
 
    std::cout << "Time elapsed for multiply the matrices was: " << totalTime << " seconds" << std::endl;
+
+   }
+   Kokkos::finalize();
 
    return 0;
 }
