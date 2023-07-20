@@ -5,6 +5,8 @@
 #include <chrono>
 #include <cstring>
 
+#include <Kokkos_Core.hpp>
+
 void checkDimensions(int &dim);
 
 int main(int argc, char *argv[])
