@@ -43,6 +43,10 @@ int main(int argc, char *argv[])
 
     int n = dim;
 
+    #ifdef KOKKOS_ENABLE_CUDA
+    #define MemSpace Kokkos::CudaSpace
+    #endif
+
     #ifndef MemSpace
     #define MemSpace Kokkos::HostSpace
     #endif
@@ -125,7 +129,7 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
     }
     */
-   
+
     }
     Kokkos::finalize();
 

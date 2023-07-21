@@ -1,5 +1,5 @@
 KOKKOS_PATH = ${HOME}/kokkos
-KOKKOS_DEVICES = "Serial"
+KOKKOS_DEVICES = "Serial,Cuda"
 EXE_NAME = "kokkosMMBench"
 
 SRC = $(wildcard *.cpp)
@@ -7,6 +7,12 @@ SRC = $(wildcard *.cpp)
 default: build
 	echo "Start Build"
 
+ifneq(,$(findstring Cuda,$(KOKKOS_DEVICES)))
+CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
+EXE = ${EXE_NAME}.cuda
+KOKKOS_ARCH = "Maxwell50"
+KOKKOS_CUDA_OPTIONS = "enable_lambda"
+else
 CXX = g++
 EXE = ${EXE_NAME}.host
 KOKKOS_ARCH = ""
@@ -28,7 +34,7 @@ $(EXE): $(OBJ) $(KOKKOS_LINK_DEPENDS)
 	$(LINK) $(KOKKOS_LDFLAGS) $(LINKFLAGS) $(EXTRA_PATH) $(OBJ) $(KOKKOS_LIBS) $(LIB) -o $(EXE)
 
 clean: kokkos-clean
-	rm -f *.o *.host
+	rm -f *.o *.host *.cuda
 
 # Compilation rules
 
