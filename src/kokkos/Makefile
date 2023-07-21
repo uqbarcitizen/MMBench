@@ -7,7 +7,7 @@ SRC = $(wildcard *.cpp)
 default: build
 	echo "Start Build"
 
-ifneq(,$(findstring Cuda,$(KOKKOS_DEVICES)))
+ifneq (,$(findstring Cuda,$(KOKKOS_DEVICES)))
 CXX = ${KOKKOS_PATH}/bin/nvcc_wrapper
 EXE = ${EXE_NAME}.cuda
 KOKKOS_ARCH = "Maxwell50"
@@ -16,6 +16,7 @@ else
 CXX = g++
 EXE = ${EXE_NAME}.host
 KOKKOS_ARCH = ""
+endif
 
 CXXFLAGS = -O3
 LINK = ${CXX}
