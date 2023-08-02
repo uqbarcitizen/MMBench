@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     #define MemSpace Kokkos::HostSpace
     #endif
 
-    using ExecSpace = MemSpace::executionspace;
+    using ExecSpace = MemSpace::execution_space;
     using range_policy = Kokkos::RangePolicy<ExecSpace>;
 
     //Allocate A, B and C matrix on device
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         {
             for (int k = 0; k < n; k++)
             {
-                C(i,j) += A(i,k) * B(k,j);
+                d_C(i,j) += d_A(i,k) * d_B(k,j);
             }
         }       
     });
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
         {
             for (int k = 0; k < n; k++)
             {
-                C(i,j) += A(i,k) * B(k,j);
+                d_C(i,j) += A(i,k) * B(k,j);
             }
         }
     });
