@@ -105,10 +105,12 @@ int main(int argc, char *argv[])
 
     Kokkos::parallel_for("C=A*B", mdrange_policy({0, 0}, {n, n}), KOKKOS_LAMBDA (int i, int j)
     {
+        double tmp = 0.0;
         for (int k = 0; k < n; k++)
         {
-            d_C(i,j) += d_A(i,k) * d_B(k,j);
+            tmp += d_A(i,k) * d_B(k,j);
         }
+        d_C(i,j) = tmp;
     });
 
     /*
