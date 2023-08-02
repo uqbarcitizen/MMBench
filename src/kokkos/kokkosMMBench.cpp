@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     #endif
 
     using ExecSpace = MemSpace::execution_space;
-    using range_policy = Kokkos::RangePolicy<ExecSpace>;
+    using mdrange_policy = Kokkos::MDRangePolicy<ExecSpace>;
 
     //Allocate A, B and C matrix on device
     typedef Kokkos::View<int**> ViewMatrixType;
@@ -103,7 +103,16 @@ int main(int argc, char *argv[])
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    Kokkos::parallel_for("C=A*B", range_policy(0, n), KOKKOS_LAMBDA(int i)
+    Kokkos::parallel_for("C=A*B", mdrange_policy({0, 0}, {n, n}), KOKKOS_LAMBDA (int i, int j)
+    {
+        for (int k = 0; k < n; k++)
+        {
+            d_C(i,j) += d_A(i,k) * d_B(k,j);
+        }
+    });
+
+    /*
+    Kokkos::parallel_for("C=A*B", mdrange_policy({0, 0}, {n, n}), KOKKOS_LAMBDA (int i, int j)
     {
         for (int j = 0; j < n; j++)
         {
@@ -113,6 +122,7 @@ int main(int argc, char *argv[])
             }
         }       
     });
+    */
 
     /*
     //Perform the matrix multiplication -> C = A*B
