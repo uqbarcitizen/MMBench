@@ -47,30 +47,33 @@ int main(int argc, char *argv[])
     #define MemSpace Kokkos::CudaSpace
     #endif
 
+    #ifdef KOKKOS_ENABLE_OPENMPTARGET
+    #define MemSpace Kokkos::OpenMPTargetSpace
+    #endif
+
     #ifndef MemSpace
     #define MemSpace Kokkos::HostSpace
     #endif
 
-    using ExecSpace = MemSpace::execution_space;
+    using ExecSpace = MemSpace::executionspace;
     using range_policy = Kokkos::RangePolicy<ExecSpace>;
 
-    //Allocate Matrix A, B, C on device
-    typedef Kokkos::View<int**, Kokkos::LayoutLeft, MemSpace> ViewMatrixType;
-    ViewMatrixType A("A", n, n);
-    ViewMatrixType B("B", n, n);
-    ViewMatrixType C("C", n, n);
+    //Allocate A, B and C matrix on device
+    typedef Kokkos::View<int**> ViewMatrixType;
+    ViewMatrixType d_A("A", n, n);
+    ViewMatrixType d_B("B", n, n);
+    ViewMatrixType d_C("C", n, n);
 
-    //Host mirrors of device views
-    ViewMatrixType::HostMirror h_A = Kokkos::create_mirror_view(A);
-    ViewMatrixType::HostMirror h_B = Kokkos::create_mirror_view(B);
-    ViewMatrixType::HostMirror h_C = Kokkos::create_mirror_view(C);
+    ViewMatrixType::HostMirror h_A = Kokkos::create_mirror_view(d_A);
+    ViewMatrixType::HostMirror h_B = Kokkos::create_mirror_view(d_B);
+    ViewMatrixType::HostMirror h_C = Kokkos::create_mirror_view(d_C);
 
     //Matrix A init
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
-            h_A(i,j) = 2;
+            h_A(i,j) = 1;
         }
     }
 
@@ -79,7 +82,7 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < n; j++)
         {
-            h_B(i,j) = 2;
+            h_B(i,j) = 1;
         }
     }
 
@@ -92,15 +95,26 @@ int main(int argc, char *argv[])
         }
     }
 
-    //Deep copy host views to device views
-    Kokkos::deep_copy(A, h_A);
-    Kokkos::deep_copy(B, h_B);
-    Kokkos::deep_copy(C, h_C);
+    Kokkos::deep_copy(d_A, h_A);
+    Kokkos::deep_copy(d_B, h_B);
+    Kokkos::deep_copy(d_C, h_C);
 
     double totalTime;
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
+    Kokkos::parallel_for("C=A*B", range_policy(0, n), KOKKOS_LAMBDA(int i)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            for (int k = 0; k < n; k++)
+            {
+                C(i,j) += A(i,k) * B(k,j);
+            }
+        }       
+    });
+
+    /*
     //Perform the matrix multiplication -> C = A*B
     Kokkos::parallel_for("m_mul", n, KOKKOS_LAMBDA (const int i)
     {
@@ -112,6 +126,7 @@ int main(int argc, char *argv[])
             }
         }
     });
+    */
 
     auto t2 = std::chrono::high_resolution_clock::now();
 
